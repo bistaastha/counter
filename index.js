@@ -8,6 +8,7 @@ module.exports = (app) => {
     // `context` extracts information from the event, which can be passed to
     // GitHub API calls. This will return:
     //   {owner: 'yourname', repo: 'yourrepo', number: 123, body: 'Hello World!}
+    //fetch issue number
     const str = context.payload.comment.body;
     const issueObject = await context.github.issues.listComments({
       owner: 'bistaastha',
@@ -18,13 +19,32 @@ module.exports = (app) => {
     let checklists = issueObject.data.filter(function (comment) {
     return (comment.user.type == "Bot") && (comment.body.substring(0, 15) == "# Checklist for");
     })
-
-    let totalCheckCount = await checklists.map(function (element) {
+//mapping not required for total check calculation
+    let totalCheckCount = checklists.map(function (element) {
       return ((element.body.match(/\[x\]/g) || []).length) + ((element.body.match(/\[ \]/g) || []).length);
     })
-console.log(totalCheckCount);
-   // console.log("Total check count: " + totalCheckCount);
-    // Post a comment on the issue
+
+    console.log(totalCheckCount);
+    totalCheckCount = totalCheckCount.map(function (element) {
+      return element - initialCheckCount;
+    });
+
+    let positiveCheckCount = checklists.map(function (element) {
+
+        let checkCount =  +((element.body.match(/\[x\]/g) || []).length) - initialCheckCount;
+        if (checkCount <= 0)
+          return 0;
+        else
+          return checkCount;
+    })
+
+    let percentages = positiveCheckCount.map(function (element) {
+      let p = Math.floor((element/totalCheckCount[0]) * 100);
+      return p;
+    })
+
+
+    console.log((percentages));
     if (count == 1)
     {
       count -= 1;
@@ -35,14 +55,9 @@ console.log(totalCheckCount);
 }
 
 /*Steps:
-- Create an empty object for each pull request when it is opened
-- Check the subsequent issue_comment.created instances, if the comment says # Checklist for and is make by a bot, store 
-the API url in the object with pr details
-- when /count is invoked, count the number of tick marks and generate the percentage
-- print the subsequent badge
-
-Alternatively, get all comments by the bot at the time generate is invoked and pick out the relevant ones, then count the markdown tick marks. 
-- This can be done
+- Link the above code to commands
+- create different files for Events and projects
+- refer to other probots
 */
 
 /*commands(app, 'generate', (context, command) => {
