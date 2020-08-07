@@ -1,4 +1,6 @@
 let count = 1;
+//These are excluded from the final count.
+const initialCheckCount = 6;
 module.exports = (app) => {
 
   // example of probot responding 'Hello World' to a new issue being opened
@@ -6,7 +8,7 @@ module.exports = (app) => {
     // `context` extracts information from the event, which can be passed to
     // GitHub API calls. This will return:
     //   {owner: 'yourname', repo: 'yourrepo', number: 123, body: 'Hello World!}
-    const str = context.payload.comment.body
+    const str = context.payload.comment.body;
     const issueObject = await context.github.issues.listComments({
       owner: 'bistaastha',
       repo: 'bot-showcase', 
@@ -17,7 +19,11 @@ module.exports = (app) => {
     return (comment.user.type == "Bot") && (comment.body.substring(0, 15) == "# Checklist for");
     })
 
-    console.log(checklists);
+    let totalCheckCount = await checklists.map(function (element) {
+      return ((element.body.match(/\[x\]/g) || []).length) + ((element.body.match(/\[ \]/g) || []).length);
+    })
+console.log(totalCheckCount);
+   // console.log("Total check count: " + totalCheckCount);
     // Post a comment on the issue
     if (count == 1)
     {
@@ -26,13 +32,6 @@ module.exports = (app) => {
     }
     return 0;
   })
-
-  const countChecks = (commentString) =>
-  {
-    let countedChecks = 0;
-
-    return countedChecks;
-  }
 }
 
 /*Steps:
