@@ -14,7 +14,7 @@ module.exports = (app) => {
     {
       initialCheckCount = 4;
     }
-    
+
     let checklists = issueObject.data.filter(function (comment) {
     return (comment.user.type == "Bot") && (comment.body.substring(0, 15) == "# Checklist for");
     })
@@ -64,45 +64,3 @@ module.exports = (app) => {
   });
 
 }
-
-
-/*Steps:
-- Link the above code to commands
-- create different files for Events and projects
-- refer to other probots
-*/
-
-/*commands(app, 'generate', (context, command) => {
-  const statusArray = command.arguments.split(/, */
-  /*const status = statusArray[0];
-  const pullRequestURL = context.payload.issue.html_url;
-  const config = async() => await context.config('config.yml');
-  //Badge is pending unless otherwise specified
-
-  let finalBadgeURL = config.passingBadgeURL;
-  /*if (status == "passing")
-  {
-    if(config.passingBadgeURL)
-    console.log(config.passingBadgeURL);
-     // finalBadgeURL = passingBadgeURL;
-  }
-  if (status == "silver")
-  {
-    if(config.silverBadgeURL)
-      finalBadgeURL = silverBadgeURL;
-  }
-  if (status == "gold")
-  {
-    if(config.goldBadgeURL)
-      finalBadgeURL = goldBadgeURL;
-  }*/
-  /*finalBadgeURL += "&link=" + pullRequestURL;
-  const instructions =
-  `Paste the Markdown link below where you want the badge displayed.`;
-  const finalBadge = "![badge-level](" + finalBadgeURL + ")";
-  
-  const badgeMessage = finalBadge + "\n" + instructions + "\n```\n" + "Markdown: " + finalBadge + "\n```" ;
-  return context.github.issues.createComment(
-    context.issue({ body: badgeMessage })
-  );
-});*/
